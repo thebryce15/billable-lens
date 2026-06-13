@@ -32,7 +32,7 @@ update. Mirror it to a git tag (`vX.Y.Z`) and a GitHub Release.
 From the repo root (PowerShell):
 
 ```powershell
-Compress-Archive -Path extension\* -DestinationPath billable-checker-for-scoro-vX.Y.Z.zip -Force
+Compress-Archive -Path extension\* -DestinationPath billable-lens-vX.Y.Z.zip -Force
 ```
 
 `extension\*` puts the manifest at the zip root. Generated zips are gitignored.

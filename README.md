@@ -1,4 +1,6 @@
-# Billable Checker for Scoro
+# Billable Lens
+
+*See billable vs non-billable hours at a glance on Scoro timesheets.*
 
 > **Unofficial community tool.** Not affiliated with, endorsed by, or supported by
 > Scoro Software OÜ. "Scoro" is a trademark of its respective owner and is used here

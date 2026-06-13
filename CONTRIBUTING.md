@@ -1,4 +1,4 @@
-# Contributing
+# Contributing to Billable Lens
 
 Thanks for your interest. This is a small, plain-JavaScript Chrome / Edge extension —
 no build step, no dependencies.

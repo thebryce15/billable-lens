@@ -1,5 +1,5 @@
 /*
- * Scoro Billable Checker
+ * Billable Lens — billable status on Scoro timesheets
  *
  * Runs in the page's MAIN world so it can call Scoro's own AJAX machinery
  * (window.scoro.submitAjax) with the user's existing session. For every
@@ -16,7 +16,7 @@
 (() => {
   'use strict';
 
-  const BADGE_CLASS = 'sbc-badge';
+  const BADGE_CLASS = 'bl-badge';
   const MAX_CONCURRENT = 4;
   const FETCH_TIMEOUT_MS = 20000;
 
@@ -205,7 +205,7 @@
         start();
       } else if (++tries > 40) {
         clearInterval(timer);
-        console.warn('[Scoro Billable Checker] scoro.submitAjax never appeared; giving up.');
+        console.warn('[Billable Lens] scoro.submitAjax never appeared; giving up.');
       }
     }, 250);
   }
