@@ -7,9 +7,12 @@
  * opens when you click the entry, reads the hidden billable fields out of
  * the returned HTML, and paints a badge:
  *
- *   green check  - billable_time_type === 'billable'  (all hours billable)
- *   red X        - 'non_billable'
- *   orange X     - 'custom' (partially billable; tooltip shows the split)
+ *   green check  - billable (all hours billable)
+ *   gray check   - non-billable, but the task forbids billable (e.g. Overhead) - expected
+ *   red X        - non-billable, but the task CAN be billable (worth a look)
+ *   orange half  - 'custom' (partially billable; tooltip shows the split)
+ *   lock         - invoiced / billed (fetch returns ERROR) - locked, not editable
+ *   gray dot     - time off / status unavailable
  *
  * Read-only: it never renders or submits the modal, only parses it.
  */
@@ -45,19 +48,24 @@
   }
 
   function parseModal(response) {
-    if (!response || response.status === 'ERROR') return null;
+    if (!response) return { kind: 'error' };                       // timeout / exception
+    if (response.status === 'ERROR') return { kind: 'restricted' }; // invoiced/billed - can't open or edit
     const html = response.data && response.data.content;
-    if (!html) return null;
+    if (!html) return { kind: 'error' };
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const typeInput = doc.querySelector('input[name="billable_time_type"]');
-    if (!typeInput) return null; // not a regular time entry (e.g. time off)
+    if (!typeInput) return { kind: 'timeoff' };                    // not a regular time entry (e.g. time off)
     const billable = parseInt(doc.querySelector('input[name="billable_duration"]')?.value, 10);
     const selected = doc.querySelector('select[name="duration"] option[selected]');
     const duration = parseInt(selected ? selected.value : 'NaN', 10);
+    // event_billable_time_type = the TASK's billable policy (separate from the entry's own type).
+    const taskPolicy = (doc.querySelector('input[name="event_billable_time_type"]') || {}).value || null;
     return {
+      kind: 'entry',
       type: typeInput.value,
       billable: Number.isNaN(billable) ? null : billable,
       duration: Number.isNaN(duration) ? null : duration,
+      taskPolicy,
     };
   }
 
@@ -108,22 +116,27 @@
     const span = document.createElement('span');
     span.className = BADGE_CLASS;
     span.style.cssText = 'margin-left:4px;font-weight:700;pointer-events:none;';
-    if (!info) {
-      span.textContent = '·';
-      span.style.color = '#B4BCCA';
-      span.title = 'Billable status unavailable';
+    const set = (text, color, title) => {
+      span.textContent = text;
+      span.style.color = color;
+      span.title = title;
+    };
+    if (!info || info.kind === 'error') {
+      set('·', '#B4BCCA', 'Billable status unavailable');
+    } else if (info.kind === 'restricted') {
+      set('🔒', '#637381', 'Invoiced / billed — locked, not editable');
+    } else if (info.kind === 'timeoff') {
+      set('·', '#B4BCCA', 'Time off / not a billable entry');
     } else if (info.type === 'billable') {
-      span.textContent = '✓';
-      span.style.color = '#50B83C';
-      span.title = 'All time billable';
+      set('✓', '#50B83C', 'All hours billable');
     } else if (info.type === 'non_billable') {
-      span.textContent = '✗';
-      span.style.color = '#DE3618';
-      span.title = 'Non-billable';
+      if (info.taskPolicy === 'non_billable') {
+        set('✓', '#8C9196', 'Non-billable by task policy (e.g. Overhead) — expected');
+      } else {
+        set('✗', '#DE3618', 'Non-billable — this task can be billable');
+      }
     } else {
-      span.textContent = '✗';
-      span.style.color = '#F49342';
-      span.title = `Partially billable: ${secondsToLabel(info.billable)} of ${secondsToLabel(info.duration)}`;
+      set('◐', '#F49342', `Partially billable: ${secondsToLabel(info.billable)} of ${secondsToLabel(info.duration)}`);
     }
     return span;
   }

@@ -7,19 +7,21 @@
 > only to describe compatibility.
 
 A lightweight Chrome / Edge extension that adds a billable-status indicator to the
-Scoro timesheet — a green ✓ / red ✗ / orange ✗ (partial) / gray · (unknown) badge on
-each time entry — so you can see at a glance whether hours are billable **without
-clicking into every entry**. Scoro removed this indicator; this restores it.
+Scoro timesheet — a color-coded ✓ / ✗ / 🔒 badge on each time entry — so you can see at
+a glance whether hours are billable **without clicking into every entry**. Scoro removed
+this indicator; this restores it.
 
 <!-- TODO: add a sanitized before/after screenshot here (assets/) -->
 
 ## Features
 
 - **Per-entry billable badge** on the timesheet week view:
-  - **✓ green** — all time billable
-  - **✗ red** — non-billable
-  - **✗ orange** — partially billable (hover for the split, e.g. "4h of 6h")
-  - **· gray** — couldn't be determined (e.g. time-off entries, fetch error)
+  - **✓ green** — all hours billable
+  - **✗ red** — non-billable, but the task *can* be billable (worth a look)
+  - **✓ gray** — non-billable by task policy (e.g. overhead) — expected, not a problem
+  - **◐ orange** — partially billable (hover for the split, e.g. "4h of 6h")
+  - **🔒 lock** — invoiced / billed — locked, can't be edited
+  - **· gray** — time off or status unavailable
 - **Read-only and session-based** — no API key, no configuration. Badges refresh
   automatically after you edit an entry.
 - *(Coming soon)* an optional, opt-in **"set all hours billable for this week"** action
