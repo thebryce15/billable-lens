@@ -1,0 +1,17 @@
+# Internal / private — never publish (real client data, captures, session notes)
+reports/
+html/
+Screenshots/
+
+# Build artifacts
+*.zip
+dist/
+build/
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
