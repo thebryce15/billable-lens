@@ -1,38 +1,39 @@
 # Release process
 
-Source of truth is this repo; the store package is built from a tagged commit. There's
+Source of truth is this repo; the download package is built from a tagged commit. There's
 no build system — just a clean zip.
 
 ## Versioning
 
-`manifest.json` `version` is canonical and **must strictly increase** on every store
-update. Mirror it to a git tag (`vX.Y.Z`) and a GitHub Release.
+`extension/manifest.json` `version` is canonical and **must strictly increase** for each
+new extension release. Mirror it to a git tag (`vX.Y.Z`) and a GitHub Release. The first
+publication of an existing local version uses that version.
 
 - Bug fix → patch (`1.0.1`)
-- New user-facing capability (e.g. bulk set-billable) → minor (`1.1.0`)
+- New user-facing capability → minor (`1.1.0`)
 
 ## Checklist
 
-1. Bump `version` in `extension/manifest.json`.
-2. Update the README / changelog notes.
-3. Commit; tag `vX.Y.Z`; push the tag.
-4. Build the package — zip the **contents of `extension/`** so `manifest.json` is at the
+1. Set the release version in `extension/manifest.json` and update the README download link.
+2. Validate the manifest and JavaScript, and check the indicators on an individual timesheet.
+3. Review the tracked files and commit the release to `main`.
+4. Build the package from that commit — zip the **contents of `extension/`** so `manifest.json` is at the
    zip root. It must contain only the `extension/` contents (manifest, content.js,
    icons/). It must **never** include `html/`, `reports/`, or `Screenshots/` — those live
    outside `extension/` and are gitignored.
-5. Upload the zip to the Chrome Web Store dashboard → submit for review.
-6. Upload the same zip to Microsoft Edge Add-ons (Partner Center) → submit.
-7. Create a GitHub Release for the tag and attach the zip, so load-unpacked users can grab
-   a pinned build.
-8. Once approved, update the "Add to Chrome / Edge" links in the README if the listing
-   URLs changed.
+5. Inspect the ZIP file list and verify its contents match `extension/` at the release commit.
+6. Tag that commit `vX.Y.Z`, push the tag, and create a GitHub Release with the ZIP attached.
+7. Download the published asset and verify it matches the local ZIP.
+
+Browser-store publication is a separate step if a store listing is created later.
 
 ## Packaging command
 
-From the repo root (PowerShell):
+From the repo root at the release commit (PowerShell):
 
 ```powershell
-Compress-Archive -Path extension\* -DestinationPath billable-lens-vX.Y.Z.zip -Force
+git archive --format=zip --output=billable-lens-vX.Y.Z.zip HEAD:extension
 ```
 
-`extension\*` puts the manifest at the zip root. Generated zips are gitignored.
+`HEAD:extension` includes only committed extension files and puts the manifest at the
+ZIP root. Generated ZIPs are gitignored.

@@ -11,8 +11,6 @@ Scoro timesheet — a color-coded ✓ / ✗ / 🔒 badge on each time entry — 
 a glance whether hours are billable **without clicking into every entry**. Scoro removed
 this indicator; this restores it.
 
-<!-- TODO: add a sanitized before/after screenshot here (assets/) -->
-
 ## Features
 
 - **Per-entry billable badge** on the timesheet week view:
@@ -20,58 +18,64 @@ this indicator; this restores it.
   - **✗ red** — non-billable, but the task *can* be billable (worth a look)
   - **✓ gray** — non-billable by task policy (e.g. overhead) — expected, not a problem
   - **◐ orange** — partially billable (hover for the split, e.g. "4h of 6h")
-  - **🔒 lock** — invoiced / billed — locked, can't be edited
+  - **🔒 lock** — Scoro did not allow the entry details to be opened; commonly invoiced / billed entries
   - **· gray** — time off or status unavailable
 - **Read-only and session-based** — no API key, no configuration. Badges refresh
   automatically after you edit an entry.
-- *(Coming soon)* an optional, opt-in **"set all hours billable for this week"** action
-  with a preview-and-confirm step.
 
 ## Install
 
-### One-click (recommended)
+1. Download the `billable-lens-v1.1.0.zip` asset from the
+   [v1.1.0 release](https://github.com/thebryce15/billable-lens/releases/tag/v1.1.0).
+2. Extract the ZIP into a permanent folder on your computer. Keep that folder after installation.
+3. Open `chrome://extensions` (or `edge://extensions`) and enable **Developer mode**.
+4. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
+5. Sign into Scoro with your own account. Open **Timesheet**, click an employee's name
+   to open their **individual week view**, and refresh the page. Indicators appear beside
+   individual time entries at `/tasks/timesheet/view/...`.
 
-- **Chrome:** *Chrome Web Store link — coming soon*
-- **Edge:** *Edge Add-ons link — coming soon*
+No API key or configuration is required. The toolbar icon has no menu; the indicators
+appear directly on the timesheet. If your company disables Developer mode or Load
+unpacked, ask your IT administrator about installing the extension.
 
-### Developer install (load unpacked)
-
-For contributors, or before the store listing is live:
-
-1. Download or clone this repo.
-2. Open `chrome://extensions` (or `edge://extensions`).
-3. Enable **Developer mode** (top right).
-4. Click **Load unpacked** and select the `extension/` folder.
-5. Open or refresh your timesheet at `https://<your-company>.scoro.com/tasks/timesheet`.
+If you download or clone the source repository instead, select its `extension/` folder
+in step 4. This extension is currently distributed through GitHub, not a browser store.
 
 ## How it works
 
 The billable status isn't present in the timesheet grid — Scoro only loads it when you
 open an entry. The extension runs in the page's own context and calls Scoro's existing
 in-page request (the same one a click fires) to fetch each entry's data, reads the
-billable fields, and paints a badge. Everything happens within your authenticated
-session. **No data is collected, stored, or transmitted anywhere** — only your browser
-and your own Scoro tenant are involved.
+billable fields, and paints a badge. Requests use your existing authenticated Scoro
+session and its permissions. The extension does not change or save time entries.
 
 ## Privacy
 
-This extension has no servers, no analytics, and makes no third-party calls. It does not
-collect, store, or transmit any data off your device. It reads (and, in a forthcoming
-opt-in feature, writes) time-entry data only within your own authenticated Scoro session,
-at your direction.
+Billable Lens has no server, analytics, or third-party data collection. It requests
+entry details only from your Scoro tenant through your existing session. Parsed status
+is cached in page memory until the page is reloaded; it is not saved to browser storage.
+No credentials or API keys are bundled with the extension.
 
 ## Scope / limitations
 
-- Works on the per-user timesheet **week view** (`/tasks/timesheet*`).
-- The all-staff full-list view isn't decorated — its cells are per-day aggregates; doing
-  that well would need the Scoro API rather than per-entry fetches.
-- Depends on Scoro's current page internals, so a Scoro update could break it. When that
-  happens, badges fail soft to gray dots rather than erroring.
+- Works on individual time entries in the per-user timesheet **week view**.
+- The team overview and all-staff full-list view are not decorated. Open an employee's
+  individual timesheet to see indicators.
+- Scoro does not provide billable details for every entry. A lock is not independent
+  proof that an invoice exists.
+- Depends on Scoro's page structure. If indicators are missing, unavailable, or stale,
+  refresh the timesheet. A Scoro update may require an extension update.
 
 ## Compatibility
 
-Chrome and Chromium-based Edge (Manifest V3). Works for any Scoro tenant
-(`https://*.scoro.com`).
+Current Chrome and Chromium-based Edge (Manifest V3). The extension runs on timesheet
+pages hosted at `https://*.scoro.com` and uses the account already signed into Scoro.
+
+## Updating
+
+Download and extract a newer release into the same installation folder, click the
+extension's reload button at `chrome://extensions` (or `edge://extensions`), and refresh
+Scoro. Unpacked installations do not update automatically.
 
 ## Contributing
 

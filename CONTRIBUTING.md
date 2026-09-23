@@ -19,7 +19,7 @@ no build step, no dependencies.
 
 ## Conventions
 
-- Plain ES2017+ JavaScript. No transpiler, no bundler — keep it dependency-free.
+- Plain modern JavaScript for current Chrome / Edge. No transpiler, no bundler — keep it dependency-free.
 - Match the existing style in `content.js`: small functions, terse comments.
 - The extension stays **read-only by default**. Any write capability must be explicitly
   user-initiated and gated behind a preview + confirm step — never an automatic mutation.
@@ -34,7 +34,7 @@ The extension depends on Scoro internals that can change without notice:
 - Hidden fields in that modal: `billable_time_type`, `billable_duration`, and
   `select[name="duration"] option[selected]`
 
-If Scoro changes these, badges fail soft to gray dots — that's the first place to look.
+If Scoro changes these, badges may be missing or unavailable — that's the first place to look.
 
 ## Reporting issues
 
